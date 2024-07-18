@@ -1,0 +1,57 @@
+Step-by-Step Guide
+Step 1: Obtain the Power BI Report URL
+Start with the basic URL of your Power BI report. For example:
+https://app.powerbi.com/reportEmbed?reportId=5ddd4d49-0f73-49f2-b1ec-56d75b666bd2&autoAuth=true&ctid=853f4574-75a1-4aea-89a1-ac3cc8162ae3
+
+This URL contains the reportId which we will use in the next steps to fetch details about the report pages.
+
+
+Step 2: Use the Power BI REST API to Get Report Pages
+Power BI provides a REST API to interact with reports programmatically. We will use the API to fetch the pages within a report.
+
+Navigate to the following URL to see the API documentation:
+
+Get Pages in a Report API Documentation
+
+To fetch the pages, you'll need to send an HTTP GET request to the API endpoint using your reportId. Here’s an example of how to do it:
+GET https://api.powerbi.com/v1.0/myorg/reports/{reportId}/pages
+
+Make sure to replace {reportId} with your actual reportId from the Power BI report URL.
+
+
+Step 3: Identify Hidden Pages
+The API response will include details about all the pages in your report, including hidden ones. Look for the name attribute in the response. Hidden pages will have unique identifiers like ReportSection68b005900466be0c7031.
+
+Here’s a sample response snippet:
+
+{
+  "value": [
+    {
+      "name": "ReportSection68b005900466be0c7031",
+      "displayName": "CIF_Detail",
+      "order": 4,
+      "visibility": "hidden"
+    }
+    // other pages...
+  ]
+}
+
+
+Step 4: Construct the URL to Access Hidden Pages
+Once you have the name of the hidden page, you can construct a URL to access it directly. Append the name to your base report URL using the &pageName parameter.
+
+For example, to access the CIF_Detail hidden page:
+
+https://app.powerbi.com/reportEmbed?reportId=5ddd4d49-0f73-49f2-b1ec-56d75b666bd2&autoAuth=true&ctid=853f4574-75a1-4aea-89a1-ac3cc8162ae3&pageName=ReportSection68b005900466be0c7031
+
+
+Step 5: Access and View the Hidden Page
+Open the constructed URL in your browser. You should be able to see the hidden page clearly, just like any other visible page in your Power BI report.
+
+
+Conclusion
+By following these steps, you can easily access hidden pages in your Power BI reports. This can be particularly useful for troubleshooting, reviewing additional data, or accessing special sections of a report that are not meant for regular users.
+
+Remember to keep your Power BI API credentials secure and to follow your organization’s policies on data access and security.
+
+This blog post should help you and your team navigate and access hidden pages in Power BI reports effectively. Happy reporting!
