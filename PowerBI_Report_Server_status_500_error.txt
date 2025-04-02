@@ -1,0 +1,60 @@
+PowerBI-Report-Server-Status-code-500-error
+This problem can reveal here:
+0
+
+I fixed my problem by following instruction in this article: https://community.fabric.microsoft.com/t5/Report-Server/There-is-no-data-in-the-database-for-catalogitemid/td-p/1716998
+
+ROOT CAUSE
+
+===========
+
+Change to GetCatalogExtendedContentData stored procedure via fix in May 2020
+
+ICM 179612428
+
+User Story 324871: Incident 179612428 : CSS – PBIRS/PBIX Reports display a blank page when executed during the SaveToCatalog Step during Schedule/OnDemand Refresh (3/13)
+
+===========
+
+WORKAROUND
+
+=============
+
+To revert back to the previous version of the GetCatalogExtendedContentData stored procedure, you can replace this:
+
+   
+
+SELECT 
+
+        DATALENGTH([Content]) AS ContentLength, 
+
+        [Content] 
+
+    FROM 
+
+        [CatalogItemExtendedContent] WITH (NOWAIT) -- DevNote: Using NOWAIT here because for large models the row might be locked for long durations. Fail fast and let the client retry. 
+
+    WHERE 
+
+        [ItemID] = @CatalogItemID AND ContentType = @ContentType
+ 
+
+With this:
+
+       
+
+SELECT 
+
+        DATALENGTH([Content]) AS ContentLength, 
+
+        [Content] 
+
+    FROM 
+
+        --[CatalogItemExtendedContent] WITH (NOWAIT) -- DevNote: Using NOWAIT here because for large models the row might be locked for long durations. Fail fast and let the client retry. 
+
+        [CatalogItemExtendedContent] WITH (READPAST) -- Pre-May 2020 code 
+
+    WHERE 
+
+        [ItemID] = @CatalogItemID AND ContentType = @ContentType 
